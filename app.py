@@ -82,4 +82,4 @@ elif tipo_analise == 'Importação':
         st.sidebar.warning('Insira o valor de importação, a taxa de câmbio atual e a taxa do contrato futuro.')
 
 # Rodapé
-st.sidebar.write('Ferramenta experimental')
+# st.sidebar.write('Ferramenta experimental')
