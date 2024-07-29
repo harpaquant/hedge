@@ -19,23 +19,27 @@ if tipo_analise == 'Exportação':
     valor_exportacao = st.sidebar.number_input('Valor da Exportação (em USD)', min_value=0.0, value=100000.0)
     taxa_cambio_atual = st.sidebar.number_input('Taxa de Câmbio Atual (USD/BRL)', min_value=0.0, value=5.25)
     contrato_futuro = st.sidebar.number_input('Taxa do Contrato Futuro (USD/BRL)', min_value=0.0, value=5.30)
+    percentual_hedge = st.sidebar.slider('Percentual da Exportação a Ser Hedgeado (%)', min_value=0, max_value=100, value=50)
     
     if valor_exportacao > 0 and taxa_cambio_atual > 0 and contrato_futuro > 0:
-        valor_hedge = valor_exportacao * contrato_futuro
-        valor_sem_hedge = valor_exportacao * taxa_cambio_atual
+        valor_hedgeado = valor_exportacao * (percentual_hedge / 100)
+        valor_nao_hedgeado = valor_exportacao - valor_hedgeado
+
+        recebimento_com_hedge = valor_hedgeado * contrato_futuro + valor_nao_hedgeado * taxa_cambio_atual
+        recebimento_sem_hedge = valor_exportacao * taxa_cambio_atual
 
         st.sidebar.subheader('Resultado do Hedge')
-        st.sidebar.write(f'Valor Recebido com Hedge: R$ {valor_hedge:.2f}')
-        st.sidebar.write(f'Valor Recebido sem Hedge: R$ {valor_sem_hedge:.2f}')
+        st.sidebar.write(f'Valor Recebido com Hedge: R$ {recebimento_com_hedge:.2f}')
+        st.sidebar.write(f'Valor Recebido sem Hedge: R$ {recebimento_sem_hedge:.2f}')
 
         # Gráfico de Resultado do Hedge
         valores = np.linspace(3.5, 6.0, 100)
-        recebimento_com_hedge = valor_exportacao * contrato_futuro
+        recebimento_hedge_var = valor_hedgeado * contrato_futuro + valor_nao_hedgeado * valores
         recebimento_sem_hedge = valor_exportacao * valores
 
         fig, ax = plt.subplots()
         ax.plot(valores, recebimento_sem_hedge, label='Recebimento sem Hedge')
-        ax.plot(valores, [recebimento_com_hedge]*len(valores), label='Recebimento com Hedge', linestyle='--')
+        ax.plot(valores, recebimento_hedge_var, label=f'Recebimento com Hedge ({percentual_hedge}%)', linestyle='--')
         ax.axhline(0, color='gray', linewidth=0.5, linestyle='--')
         ax.axvline(taxa_cambio_atual, color='red', linewidth=0.5, linestyle='--', label='Taxa Atual')
         ax.set_xlabel('Taxa de Câmbio (USD/BRL)')
