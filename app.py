@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Título do Dashboard
-st.title('Dashboard de Hedge Cambial - Empresa XYZ')
+st.title('Hedge Cambial - Empresa XYZ')
 
 # Descrição e Explicação
 st.header('Política de Hedge Cambial')
@@ -82,4 +82,4 @@ elif tipo_analise == 'Importação':
         st.sidebar.warning('Insira o valor de importação, a taxa de câmbio atual e a taxa do contrato futuro.')
 
 # Rodapé
-st.sidebar.write('Desenvolvido por Empresa XYZ')
+st.sidebar.write('Ferramenta experimental')
