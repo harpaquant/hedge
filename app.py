@@ -3,41 +3,79 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Título do Dashboard
-st.title('Dashboard de Hedge Cambial - Importadora & Exportadora São Francisco')
+st.title('Dashboard de Hedge Cambial - Empresa XYZ')
 
 # Descrição e Explicação
 st.header('Política de Hedge Cambial')
-st.write('Este dashboard ajuda importadores e exportadores da Importadora & Exportadora São Francisco na definição de políticas de hedge cambial usando futuros de dólar.')
+st.write('Este dashboard ajuda importadores e exportadores da Empresa XYZ na definição de políticas de hedge cambial usando futuros de dólar.')
+
+# Seleção do tipo de análise
+tipo_analise = st.sidebar.selectbox('Selecione o Tipo de Análise', ('Exportação', 'Importação'))
 
 # Inputs do Usuário
 st.sidebar.header('Parâmetros do Hedge')
-valor_exportacao = st.sidebar.number_input('Valor da Exportação (em USD)', min_value=0.0, value=100000.0)
-valor_importacao = st.sidebar.number_input('Valor da Importação (em USD)', min_value=0.0, value=50000.0)
-taxa_cambio_atual = st.sidebar.number_input('Taxa de Câmbio Atual (USD/BRL)', min_value=0.0, value=5.25)
 
-# Cálculo do Hedge
-if valor_exportacao > 0 and valor_importacao > 0 and taxa_cambio_atual > 0:
-    valor_total = valor_exportacao - valor_importacao
-    valor_hedge = valor_total * taxa_cambio_atual
+if tipo_analise == 'Exportação':
+    valor_exportacao = st.sidebar.number_input('Valor da Exportação (em USD)', min_value=0.0, value=100000.0)
+    taxa_cambio_atual = st.sidebar.number_input('Taxa de Câmbio Atual (USD/BRL)', min_value=0.0, value=5.25)
+    contrato_futuro = st.sidebar.number_input('Taxa do Contrato Futuro (USD/BRL)', min_value=0.0, value=5.30)
+    
+    if valor_exportacao > 0 and taxa_cambio_atual > 0 and contrato_futuro > 0:
+        valor_hedge = valor_exportacao * contrato_futuro
+        valor_sem_hedge = valor_exportacao * taxa_cambio_atual
 
-    st.sidebar.subheader('Resultado do Hedge')
-    st.sidebar.write(f'Valor Hedge Necessário: R$ {valor_hedge:.2f}')
+        st.sidebar.subheader('Resultado do Hedge')
+        st.sidebar.write(f'Valor Recebido com Hedge: R$ {valor_hedge:.2f}')
+        st.sidebar.write(f'Valor Recebido sem Hedge: R$ {valor_sem_hedge:.2f}')
 
-    # Gráfico de Resultado do Hedge
-    valores = np.linspace(3.5, 6.0, 100)
-    lucro_perda = np.maximum(0, valores - taxa_cambio_atual) * valor_total
+        # Gráfico de Resultado do Hedge
+        valores = np.linspace(3.5, 6.0, 100)
+        recebimento_com_hedge = valor_exportacao * contrato_futuro
+        recebimento_sem_hedge = valor_exportacao * valores
 
-    fig, ax = plt.subplots()
-    ax.plot(valores, lucro_perda, label='Lucro/Perda')
-    ax.axhline(0, color='gray', linewidth=0.5, linestyle='--')
-    ax.axvline(taxa_cambio_atual, color='red', linewidth=0.5, linestyle='--', label='Taxa Atual')
-    ax.set_xlabel('Taxa de Câmbio (USD/BRL)')
-    ax.set_ylabel('Lucro/Perda (R$)')
-    ax.legend()
-    st.pyplot(fig)
+        fig, ax = plt.subplots()
+        ax.plot(valores, recebimento_sem_hedge, label='Recebimento sem Hedge')
+        ax.plot(valores, [recebimento_com_hedge]*len(valores), label='Recebimento com Hedge', linestyle='--')
+        ax.axhline(0, color='gray', linewidth=0.5, linestyle='--')
+        ax.axvline(taxa_cambio_atual, color='red', linewidth=0.5, linestyle='--', label='Taxa Atual')
+        ax.set_xlabel('Taxa de Câmbio (USD/BRL)')
+        ax.set_ylabel('Recebimento (R$)')
+        ax.legend()
+        st.pyplot(fig)
+    
+    else:
+        st.sidebar.warning('Insira o valor de exportação, a taxa de câmbio atual e a taxa do contrato futuro.')
 
-else:
-    st.sidebar.warning('Insira os valores de exportação, importação e a taxa de câmbio atual.')
+elif tipo_analise == 'Importação':
+    valor_importacao = st.sidebar.number_input('Valor da Importação (em USD)', min_value=0.0, value=50000.0)
+    taxa_cambio_atual = st.sidebar.number_input('Taxa de Câmbio Atual (USD/BRL)', min_value=0.0, value=5.25)
+    contrato_futuro = st.sidebar.number_input('Taxa do Contrato Futuro (USD/BRL)', min_value=0.0, value=5.30)
+    
+    if valor_importacao > 0 and taxa_cambio_atual > 0 and contrato_futuro > 0:
+        custo_hedge = valor_importacao * contrato_futuro
+        custo_sem_hedge = valor_importacao * taxa_cambio_atual
+
+        st.sidebar.subheader('Resultado do Hedge')
+        st.sidebar.write(f'Custo com Hedge: R$ {custo_hedge:.2f}')
+        st.sidebar.write(f'Custo sem Hedge: R$ {custo_sem_hedge:.2f}')
+
+        # Gráfico de Resultado do Hedge
+        valores = np.linspace(3.5, 6.0, 100)
+        custo_com_hedge = valor_importacao * contrato_futuro
+        custo_sem_hedge = valor_importacao * valores
+
+        fig, ax = plt.subplots()
+        ax.plot(valores, custo_sem_hedge, label='Custo sem Hedge')
+        ax.plot(valores, [custo_com_hedge]*len(valores), label='Custo com Hedge', linestyle='--')
+        ax.axhline(0, color='gray', linewidth=0.5, linestyle='--')
+        ax.axvline(taxa_cambio_atual, color='red', linewidth=0.5, linestyle='--', label='Taxa Atual')
+        ax.set_xlabel('Taxa de Câmbio (USD/BRL)')
+        ax.set_ylabel('Custo (R$)')
+        ax.legend()
+        st.pyplot(fig)
+    
+    else:
+        st.sidebar.warning('Insira o valor de importação, a taxa de câmbio atual e a taxa do contrato futuro.')
 
 # Rodapé
-st.sidebar.write('Desenvolvido por Importadora & Exportadora São Francisco')
+st.sidebar.write('Desenvolvido por Empresa XYZ')
