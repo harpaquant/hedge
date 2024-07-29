@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 # Título do Dashboard
 st.title('Hedge Cambial')
 
+# Set page title
+st.set_page_config(page_title="Hedge Cambial", layout="wide")
+
 # Descrição e Explicação
 st.write('Este dashboard ajuda importadores e exportadores na definição de políticas de hedge cambial usando futuros/termo de dólar.')
 
