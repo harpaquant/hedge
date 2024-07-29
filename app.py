@@ -3,11 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Título do Dashboard
-st.title('Hedge Cambial - Empresa XYZ')
+st.title('Hedge Cambial')
 
 # Descrição e Explicação
-st.header('Política de Hedge Cambial')
-st.write('Este dashboard ajuda importadores e exportadores da Empresa XYZ na definição de políticas de hedge cambial usando futuros de dólar.')
+st.write('Este dashboard ajuda importadores e exportadores na definição de políticas de hedge cambial usando futuros/termo de dólar.')
 
 # Seleção do tipo de análise
 tipo_analise = st.sidebar.selectbox('Selecione o Tipo de Análise', ('Exportação', 'Importação'))
