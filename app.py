@@ -1,6 +1,9 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+import yfinance as yf
+from datetime import datetime, timedelta
+from bcb import Expectativas
 
 # Configuração da página
 st.set_page_config(page_title='Hedge Cambial')
@@ -9,7 +12,11 @@ st.set_page_config(page_title='Hedge Cambial')
 st.title('Hedge Cambial')
 
 # Descrição e Explicação
-st.write('Este dashboard ajuda importadores e exportadores na definição de políticas de hedge cambial usando futuros/termo de dólar.')
+st.write('''Este dashboard ajuda importadores e exportadores na definição de políticas de hedge cambial usando 
+         futuros/termo de dólar. Abaixo, três figuras: 1. Resultado do hedge. 2. Comportamento da taxa de câmbio 
+         nos últimos dois anos. 3. Comportamento da mediana das previsões da taxa de câmbio para final do ano 
+         corrente segundo Boletim Focus-Bacen. 4. Comportamento da mediana das previsões da taxa de câmbio para 
+         final do ano seguinte segundo Boletim Focus-Bacen.''')
 
 # Seleção do tipo de análise
 tipo_analise = st.sidebar.selectbox('Selecione o Tipo de Análise', ('Exportação', 'Importação'))
@@ -44,6 +51,7 @@ if tipo_analise == 'Exportação':
         ax.plot(valores, recebimento_hedge_var, label=f'Recebimento com Hedge ({percentual_hedge}%)', linestyle='--')
         ax.axhline(0, color='gray', linewidth=0.5, linestyle='--')
         ax.axvline(taxa_cambio_atual, color='red', linewidth=0.5, linestyle='--', label='Taxa Atual')
+        ax.set_title('Payoff da Estratégia')
         ax.set_xlabel('Taxa de Câmbio (USD/BRL)')
         ax.set_ylabel('Recebimento (R$)')
         ax.legend()
@@ -53,7 +61,7 @@ if tipo_analise == 'Exportação':
         st.sidebar.warning('Insira o valor de exportação, a taxa de câmbio atual e a taxa do contrato futuro.')
 
 elif tipo_analise == 'Importação':
-    valor_importacao = st.sidebar.number_input('Valor da Importação (em USD)', min_value=0.0, value=50000.0)
+    valor_importacao = st.sidebar.number_input('Valor da Importação (em USD)', min_value=0.0, value=100000.0)
     taxa_cambio_atual = st.sidebar.number_input('Taxa de Câmbio Atual (USD/BRL)', min_value=0.0, value=5.25)
     contrato_futuro = st.sidebar.number_input('Taxa do Contrato Futuro (USD/BRL)', min_value=0.0, value=5.30)
     percentual_hedge = st.sidebar.slider('Percentual da Importação a Ser Hedgeado (%)', min_value=0, max_value=100, value=50)
@@ -79,6 +87,7 @@ elif tipo_analise == 'Importação':
         ax.plot(valores, custo_hedge_var, label=f'Custo com Hedge ({percentual_hedge}%)', linestyle='--')
         ax.axhline(0, color='gray', linewidth=0.5, linestyle='--')
         ax.axvline(taxa_cambio_atual, color='red', linewidth=0.5, linestyle='--', label='Taxa Atual')
+        ax.set_title('Payoff da Estratégia')
         ax.set_xlabel('Taxa de Câmbio (USD/BRL)')
         ax.set_ylabel('Custo (R$)')
         ax.legend()
@@ -87,5 +96,21 @@ elif tipo_analise == 'Importação':
     else:
         st.sidebar.warning('Insira o valor de importação, a taxa de câmbio atual e a taxa do contrato futuro.')
 
-# Rodapé
-# st.sidebar.write('Ferramenta experimental')
+## Histórico da taxa de câmbio
+ticker = "BRL=X"
+# Defina o período desejado para o gráfico.
+end_date = datetime.today().strftime('%Y-%m-%d')
+start_date = (datetime.today() - timedelta(days=2*365)).strftime('%Y-%m-%d')
+# Obtém os dados históricos usando yfinance.
+data = yf.download(ticker, start=start_date, end=end_date)
+# Crie o gráfico da evolução da taxa de câmbio.
+fig, ax = plt.subplots()
+ax.plot(data['Close'], label='Taxa de Câmbio (BRL/USD)')
+ax.set_title('Evolução da Taxa de Câmbio Real/Dólar')
+ax.set_xlabel('Data')
+ax.set_ylabel('Taxa de Câmbio')
+ax.legend()
+ax.tick_params(axis='x', labelsize=8)
+st.pyplot(fig)
+
+## Histórico das previsões divulgadas no Focus-BCB
