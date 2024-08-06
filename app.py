@@ -105,7 +105,7 @@ start_date = (datetime.today() - timedelta(days=2*365)).strftime('%Y-%m-%d')
 data = yf.download(ticker, start=start_date, end=end_date)
 # Crie o gráfico da evolução da taxa de câmbio.
 fig, ax = plt.subplots()
-ax.plot(data['Close'], label='Taxa de Câmbio (BRL/USD)')
+ax.plot(data['Close'])
 ax.set_title('Evolução da Taxa de Câmbio Real/Dólar')
 ax.set_xlabel('Data')
 ax.set_ylabel('Taxa de Câmbio')
@@ -114,3 +114,62 @@ ax.tick_params(axis='x', labelsize=8)
 st.pyplot(fig)
 
 ## Histórico das previsões divulgadas no Focus-BCB
+em = Expectativas()
+ep = em.get_endpoint("ExpectativasMercadoAnuais")
+
+def get_previsoes(indicador, ano):
+    previsoes = (ep.query()
+                 .filter(ep.Indicador == f"{indicador}")
+                 .filter(ep.Data >= f'{ano-1}-01-01')
+                 .filter(ep.DataReferencia == ano)
+                 .select(ep.Data, ep.Mediana)
+                 .orderby(ep.Data.desc())  # Corrigido para 'orderby'
+                 .limit(1000)  # Limitar as últimas 252 previsões
+                 .collect())
+    return previsoes
+
+# Obter as previsões
+previsoes = get_previsoes('Câmbio', 2024)
+
+# Se previsoes é um DataFrame
+datas = previsoes['Data']
+medianas = previsoes['Mediana']
+
+# Reverter a lista para ordem cronológica
+datas = datas[::-1]
+medianas = medianas[::-1]
+
+# Criar o gráfico
+fig, ax = plt.subplots()
+ax.plot(datas, medianas)
+ax.set_title('Mediana das Previsões de Câmbio para Final de 2024')
+ax.set_xlabel('Data')
+ax.set_ylabel('Mediana (R$)')
+ax.legend()
+plt.xticks(rotation=45)
+plt.tight_layout()
+st.pyplot(fig)
+
+
+## E 2025
+# Obter as previsões
+previsoes = get_previsoes('Câmbio', 2025)
+
+# Se previsoes é um DataFrame
+datas = previsoes['Data']
+medianas = previsoes['Mediana']
+
+# Reverter a lista para ordem cronológica
+datas = datas[::-1]
+medianas = medianas[::-1]
+
+# Criar o gráfico
+fig, ax = plt.subplots()
+ax.plot(datas, medianas)
+ax.set_title('Mediana das Previsões de Câmbio para Final de 2025')
+ax.set_xlabel('Data')
+ax.set_ylabel('Mediana (R$)')
+ax.legend()
+plt.xticks(rotation=45)
+plt.tight_layout()
+st.pyplot(fig)
