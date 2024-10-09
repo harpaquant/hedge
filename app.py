@@ -18,6 +18,12 @@ st.write('''Este dashboard ajuda importadores e exportadores na definição de p
          corrente segundo Boletim Focus-Bacen. 4. Comportamento da mediana das previsões da taxa de câmbio para 
          final do ano seguinte segundo Boletim Focus-Bacen.''')
 
+
+st.sidebar.markdown("""
+    Contato: harpaquant@gmail.com
+    """)
+st.sidebar.markdown('---')
+
 # Seleção do tipo de análise
 tipo_analise = st.sidebar.selectbox('Selecione o Tipo de Análise', ('Exportação', 'Importação'))
 
