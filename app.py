@@ -9,7 +9,7 @@ from bcb import Expectativas
 st.set_page_config(page_title='Hedge Cambial')
 
 # Título do Dashboard
-st.title('Hedge Cambial')
+st.markdown('<span style="color:gold; font-size: 48px">&#9733;</span> <span style="font-size: 48px; font-weight: bold">Hedge Cambial</span>', unsafe_allow_html=True)
 
 # Descrição e Explicação
 st.write('''Este dashboard ajuda importadores e exportadores na definição de políticas de hedge cambial usando 
