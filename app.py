@@ -23,7 +23,6 @@ st.sidebar.markdown("""
     Prof. Vinicio Almeida
     vinicio.almeida@ufrn.br
                     
-    https://www.linkedin.com/in/vinicioalmeida/
     https://sites.google.com/view/vinicioalmeida/                
     """)
 st.sidebar.markdown('---')
