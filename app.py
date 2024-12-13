@@ -20,7 +20,8 @@ st.write('''Este dashboard ajuda importadores e exportadores na definição de p
 
 
 st.sidebar.markdown("""
-    Contato: harpaquant@gmail.com
+    Prof. Vinicio Almeida
+    https://www.linkedin.com/in/vinicioalmeida/                
     """)
 st.sidebar.markdown('---')
 
