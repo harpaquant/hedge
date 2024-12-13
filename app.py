@@ -21,6 +21,8 @@ st.write('''Este dashboard ajuda importadores e exportadores na definição de p
 
 st.sidebar.markdown("""
     Prof. Vinicio Almeida
+    vinicio.almeida@ufrn.br
+                    
     https://www.linkedin.com/in/vinicioalmeida/
     https://sites.google.com/view/vinicioalmeida/                
     """)
